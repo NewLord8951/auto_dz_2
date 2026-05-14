@@ -13,23 +13,23 @@ with sync_playwright() as p:
     browser = p.chromium.launch(headless=False)
     page = browser.new_page()
     page.goto("https://journal.top-academy.ru/")
-    page.wait_for_selector('input[name="username"]', timeout=1000)
+    page.wait_for_selector('input[name="username"]', timeout=100)
     page.fill('input[name="username"]', L)
     page.fill('input[name="password"]', P)
     page.click('button[type="submit"]')
-    page.wait_for_timeout(1000)
+    page.wait_for_timeout(100)
     page.goto("https://journal.top-academy.ru/main/homework/page/index")
     try:
         page.click('line[x1="25"][x2="11"][y1="11"][y2="25"]')
     except:
         pass
-    page.wait_for_selector('.homework-item', timeout=1000)
+    page.wait_for_selector('.homework-item', timeout=100)
     now = 0
     maximum = 100
     processed_count = 0
     try:
         try:
-            page.wait_for_selector(".error-text", state="visible", timeout=1000)
+            page.wait_for_selector(".error-text", state="visible", timeout=100)
         except PlaywrightTimeout:
             pass
         star = page.locator('span.bs-rating-star[title="5"]')
@@ -56,9 +56,9 @@ with sync_playwright() as p:
                         subject_element = homework_item.query_selector('.name-spec')
                         subject_name = subject_element.inner_text() if subject_element else f"Задание {index + 1}"
                         homework_item.hover()
-                        page.wait_for_timeout(1000)
+                        page.wait_for_timeout(100)
                         upload_button.click()
-                        page.wait_for_timeout(1000)
+                        page.wait_for_timeout(100)
                         field = page.locator('span.text-homework-field[contenteditable]')
                         field.click()
                         field.fill("https://github.com/NewLord8951")
@@ -74,21 +74,21 @@ with sync_playwright() as p:
                             ]
                             for star_selector in star_buttons:
                                 try:
-                                    page.wait_for_selector(star_selector, timeout=1000)
+                                    page.wait_for_selector(star_selector, timeout=100)
                                     page.click(star_selector)
                                     break
                                 except:
                                     continue       
-                            page.wait_for_timeout(1000)
+                            page.wait_for_timeout(100)
                             try:
-                                hours_input = page.wait_for_selector('input[placeholder="чч"]', timeout=3000)
+                                hours_input = page.wait_for_selector('input[placeholder="чч"]', timeout=300)
                                 hours_input.click()
                                 hours_input.fill('0')
-                                page.wait_for_timeout(500)
-                                minutes_input = page.wait_for_selector('input[placeholder="мм"]', timeout=3000)
+                                page.wait_for_timeout(50)
+                                minutes_input = page.wait_for_selector('input[placeholder="мм"]', timeout=300)
                                 minutes_input.click()
                                 minutes_input.fill('30')
-                                page.wait_for_timeout(500)
+                                page.wait_for_timeout(50)
                             except:
                                 pass     
                         except Exception as rating_error:
@@ -102,26 +102,26 @@ with sync_playwright() as p:
                             ]
                             for submit_selector in submit_buttons:
                                 try:
-                                    submit_btn = page.wait_for_selector(submit_selector, timeout=3000)
+                                    submit_btn = page.wait_for_selector(submit_selector, timeout=300)
                                     if submit_btn and submit_btn.is_visible():
                                         submit_btn.click()
-                                        page.wait_for_timeout(5000)
+                                        page.wait_for_timeout(500)
                                         try:
-                                            page.wait_for_selector('.modal', state='hidden', timeout=5000)
+                                            page.wait_for_selector('.modal', state='hidden', timeout=500)
                                         except:
                                             page.keyboard.press('Escape')
-                                            page.wait_for_timeout(1000)
+                                            page.wait_for_timeout(100)
                                         break
                                 except:
                                     continue
                             else:
                                 page.keyboard.press('Escape')
-                                page.wait_for_timeout(1000)
+                                page.wait_for_timeout(100)
                         except Exception as submit_error:
                             logger.warning(f"Не удалось нажать кнопку 'Отправить': {submit_error}")
                             try:
                                 page.keyboard.press('Escape')
-                                page.wait_for_timeout(1000)
+                                page.wait_for_timeout(100)
                             except:
                                 pass
                         processed_count += 1
@@ -131,13 +131,13 @@ with sync_playwright() as p:
                     logger.error(f"Ошибка при обработке задания {index + 1}: {e}")
                     try:
                         page.keyboard.press('Escape')
-                        page.wait_for_timeout(1000)
+                        page.wait_for_timeout(100)
                     except:
                         pass
                     continue 
             if not found_active:
                 break
-            page.wait_for_timeout(3000)
+            page.wait_for_timeout(300)
             now += 1
         except Exception as e:
             logger.error(f"Общая ошибка в цикле обработки: {e}")
